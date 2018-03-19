@@ -13,7 +13,7 @@ Dependencies:
 
 Use boson.param to feed in program parameters.
 
-## evolution_boson (Chpater III)
+## evolution_boson (Chapter III)
 
 Dependencies:
 
