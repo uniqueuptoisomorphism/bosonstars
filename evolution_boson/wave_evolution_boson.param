@@ -1,0 +1,96 @@
+#-------- Parameters for boson star evolution ------------------------
+
+Nr := 257
+Nt := 700
+
+# ------------------------------------------------
+# Test Boson Star
+# ------------------------------------------------
+# phi_amp := 0.05
+# phi_delta := 3.285
+# phi_x0 := 0.0
+# radius := 20.0
+# mass := 1.0
+# init_data_omega := 1.28857
+
+# phi_perturb_amp := 0.0
+# phi_perturb_delta := 3.0
+# phi_perturb_x0 := 12.0
+
+# ------------------------------------------------
+# Test Stuff Old
+# ------------------------------------------------
+# phi_amp := 0.01
+# phi_delta := 12.0
+# phi_x0 := 0.0
+# radius := 160.0
+# mass := 0.4
+# init_data_omega := 1.0
+ 
+# phi_perturb_amp := 0.006
+# phi_perturb_delta := 8.0
+# phi_perturb_x0 := 60.0
+
+# ------------------------------------------------
+# Test Stuff
+# ------------------------------------------------
+phi_amp := 0.01
+phi_delta := 12.0
+phi_x0 := 0.0
+radius := 80.0
+mass := 0.2
+init_data_omega := 1.0
+ 
+phi_perturb_amp := 0.005
+phi_perturb_delta := 8.0
+phi_perturb_x0 := 60.0
+
+# ------------------------------------------------
+# Other parameters
+# ------------------------------------------------
+b_use_minkowski := 0
+
+#cfl flag
+lambda := 0.5
+
+# Use to specify initial data
+# ---------------------------------------------------
+# 	DATA_TYPE_NOTHING = 0,
+#
+#	DATA_TYPE_WAVE_PACKET1 = 1,
+#	DATA_TYPE_LEFT_MOVING_WAVE_PACKET1 = 2,
+#	DATA_TYPE_RIGHT_MOVING_WAVE_PACKET1 = 3,
+#
+#	DATA_TYPE_WAVE_PACKET2 = 4,
+#	DATA_TYPE_LEFT_MOVING_WAVE_PACKET2 = 5,
+#	DATA_TYPE_RIGHT_MOVING_WAVE_PACKET2 = 6,
+#
+#	DATA_TYPE_WAVE_PACKET3 = 7,
+#	DATA_TYPE_LEFT_MOVING_WAVE_PACKET3 = 8,
+#	DATA_TYPE_RIGHT_MOVING_WAVE_PACKET3 = 9,
+#
+#	DATA_TYPE_PERTURBATION_TEST = 10,
+#
+#	DATA_TYPE_PERTURBATION_GAUSSIAN = 11,
+#
+#	DATA_TYPE_PERTURBATION_FROM_FILE = 12
+# ---------------------------------------------------
+init_data_type := 11
+
+#-----------------------------------------------------
+# Time skip factors for output
+#-----------------------------------------------------
+output_time_skip := 1
+
+output_tag := "_demo"
+
+# Whether to use sparse output
+# Level 0 : all output
+# Level 1 : phi1, phi2, phi3, alpha, beta, psi, residual
+# Level 2 : phi1, phi2, phi3, residual
+# Level 3 : phi1, phi2, residual
+# Level 4 : phi1, residual
+# Level 5 : residual
+sparse_output_level := 1
+
+#-----------------------------------------------------

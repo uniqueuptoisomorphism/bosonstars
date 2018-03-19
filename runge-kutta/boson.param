@@ -1,0 +1,98 @@
+#-------- Boson Star Solver Parameters --------------
+
+#------------------- Program Mode --------------------------
+# Alternate program modes, by default this is set to 0
+# 0 - Default
+# 1 - Output Radius vs. Mass Data for a range of initial values for phi
+# 2 - Find critical transition value for solitonic boson stars
+# 3 - Output Adaptive Radius vs. Mass Data
+# 4 - Solve ODE for specified boson star frequency and initial value
+# 5 - Manual range specification, specify upper and lower bounds, fix either omega or phi(0),
+#		program finds a single state via binary search of final value
+program_mode = 4
+
+#------------------- Default Parameters --------------------------
+# Output mode
+# 0 - Default, output to sdf
+# 1 - Output to txt (when available)
+# 2 - Output to binary (when available)
+output_mode = 1
+
+# Boson star parameters
+lambda = 100
+mass = 1
+sigma = 0.05
+
+# Coupling constant (by default, it is set to 8 Pi)
+# kappa = 1
+
+# The extents of the search bracket
+bracket_begin = 0.1
+bracket_end = 20
+
+# The step size used for computation
+step_size = 0.01
+
+# The extent of the domain
+domain_end = 30
+
+# The initial value for the field
+# init_phi = 0.053720782161577
+# init_phi = 0.05375
+# init_phi = 0.053
+# init_phi = 0.052
+# init_phi = 0.0537
+init_phi = 0.1
+
+# The requested energy state (i.e. number of zeroes)
+requested_energy_state = 0
+
+# The suggested number of iterations to run
+# If the threshold isn't reached during this iteration, the solver will stop
+suggested_bisection_count = 100
+
+# The maximum number of iterations to run
+bisection_count_max = 250
+
+# The type of boson star
+# 0 - Mini
+# 1 - Massive
+# 2 - Solitonic
+boson_star_type = 0
+
+# Whether or not to use high precision computation
+use_high_precision = 0
+# If high precision is enabled, the amount of precision to use
+precision = 512
+
+#------------------- Program Mode 1 --------------------------
+# Radius vs. Mass Data Options
+radius_v_mass_phi_start = 0.05
+radius_v_mass_phi_end = 0.07
+radius_v_mass_phi_step = 0.0005
+radius_v_mass_adaptive_threshold = 0.1
+
+#------------------- Program Mode 2 --------------------------
+# Find Critical Transition Options (Solitonic Boson Stars)
+find_transition_init_phi_lower = 0.053720782161575706
+find_transition_init_phi_upper = 0.053720782161577524
+find_transition_potential_peak_location = 7.0
+find_transition_potential_peak_iterations = 10
+
+#------------------- Program Mode 4 --------------------------
+# This value is used as the boson star frequency
+omega = 1.6
+
+#------------------- Program Mode 5 --------------------------
+# Lower and upper bounds for the search variable
+manual_lower_bound = 0.62
+manual_upper_bound = 0.624
+# The search variable (omega = 0, phi(0) = 1)
+search_variable = 0
+# The value for the variable which remains fixed
+fix_variable_value = 0.053720782161577
+# Whether or not to perform inverted search
+# If the larger omega corresponds to larger endpoint value, use true. Else, use false
+b_inverted_search = 0
+
+#-----------------------------------------------------
