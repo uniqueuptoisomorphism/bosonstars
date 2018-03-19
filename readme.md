@@ -1,5 +1,7 @@
 # Source Code for A Numerical Study of Solitonic Boson Stars
 
+Thesis text available [here](https://web.stanford.edu/~paetter/Senior_Thesis.pdf).
+
 The project format is Eclipse C++. You will need Eclipse to compile the code.
 
 This project contains two subdirectories:
