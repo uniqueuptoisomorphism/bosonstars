@@ -111,57 +111,57 @@ void ReadBinFile(const string& fileName, vector<double>* output, bool* bSuccess)
 class Application
 {
 private:
-    int gridsize;
-    int Nt;
-    int var_count;
-    int b_use_minkowski;
-    int init_data_type;
-    int output_time_skip;
-    int sparse_output_level;
-    double lambda;
-    double phi_amp;
-    double phi_delta;
-    double phi_r0;
-    double phi_perturb_amp;
+	int gridsize;
+	int Nt;
+	int var_count;
+	int b_use_minkowski;
+	int init_data_type;
+	int output_time_skip;
+	int sparse_output_level;
+	double lambda;
+	double phi_amp;
+	double phi_delta;
+	double phi_r0;
+	double phi_perturb_amp;
 	double phi_perturb_delta;
 	double phi_perturb_r0;
-    double radius;
-    double event_horizon_radius;
-    double mass;
-    double init_data_omega;
-    char* pFile;
-    char output_tag[TAG_MAX_LENGTH];
+	double radius;
+	double event_horizon_radius;
+	double mass;
+	double init_data_omega;
+	char* pFile;
+	char output_tag[TAG_MAX_LENGTH];
 
-    double bbox[2];
+	double bbox[2];
 
-    double dr;
-    double dt;
+	double dr;
+	double dt;
 
-    double* phi_init;
-    double* var_buffer;
-    double* var_buffer_new;
-    double* mass_aspect;
-    double* field;
+	double* phi_init;
+	double* var_buffer;
+	double* var_buffer_new;
+	double* mass_aspect;
+	double* field;
 
-    int time;
+	int time;
 
-    GaussSolver solver;
-    size_t max_iterations_per_step = 100;
+	GaussSolver solver;
+	size_t max_iterations_per_step = 100;
 
-    inline double sqr(const double d)
-    {
-    	return d * d;
-    }
+	inline double sqr(const double d)
+	{
+		return d * d;
+	}
 
-    double Power(const double d, const int i)
-    {
-    	if (i < 0)
-    		return 1.0 / Power(d, -i);
-    	else if (i == 0)
-    		return 1.0;
-    	else
-    		return d * Power(d, i - 1);
-    }
+	double Power(const double d, const int i)
+	{
+		if (i < 0)
+			return 1.0 / Power(d, -i);
+		else if (i == 0)
+			return 1.0;
+		else
+			return d * Power(d, i - 1);
+	}
 
 	inline double xi1(const int i) 						{ return var_buffer_new[VAR_XI1 * gridsize + i]; }
 	inline double xi1(const int i, const int t) 		{ return var_buffer[VAR_XI1 * gridsize + i]; }
@@ -187,64 +187,64 @@ private:
 	inline double beta(const int i, const int t) 		{ return var_buffer[VAR_BETA * gridsize + i]; }
 	inline double alpha(const int i) 					{ return var_buffer_new[VAR_ALPHA * gridsize + i]; }
 	inline double alpha(const int i, const int t) 		{ return var_buffer[VAR_ALPHA * gridsize + i]; }
-    inline double r(const int i) 						{ return bbox[0] + i * dr; }
-    inline double r(const int i, const int t) 			{ return r(i); }
-    inline double gamma_static(const int i) 			{ return (r(i) / (r(i) + 2.0 * mass)); }
-    inline double beta_static(const int i) 				{ return (2.0 * mass) / (r(i) + 2.0 * mass); }
-    inline double V(const double phiSqr) 				{ return mass * phiSqr; }
-    inline double DV(const double phiSqr)				{ return mass; }
-    inline double V(const double phiSqr, const int t) 	{ return V(phiSqr); }
-    inline double DV(const double phiSqr, const int t)	{ return DV(phiSqr); }
+	inline double r(const int i) 						{ return bbox[0] + i * dr; }
+	inline double r(const int i, const int t) 			{ return r(i); }
+	inline double gamma_static(const int i) 			{ return (r(i) / (r(i) + 2.0 * mass)); }
+	inline double beta_static(const int i) 				{ return (2.0 * mass) / (r(i) + 2.0 * mass); }
+	inline double V(const double phiSqr) 				{ return mass * phiSqr; }
+	inline double DV(const double phiSqr)				{ return mass; }
+	inline double V(const double phiSqr, const int t) 	{ return V(phiSqr); }
+	inline double DV(const double phiSqr, const int t)	{ return DV(phiSqr); }
 
 	void InitGaussian(double vec[], const double amp, const double delta, const double x0)
 	{
-	    double dr = (bbox[1] - bbox[0]) / (gridsize - 1);
+		double dr = (bbox[1] - bbox[0]) / (gridsize - 1);
 
-	    for (int i = 0; i < gridsize; ++i)
-	    {
-	        double r = i * dr + bbox[0];
-	        vec[i] = amp * exp(-((r - x0) * (r - x0) / (delta * delta)));
-	    }
+		for (int i = 0; i < gridsize; ++i)
+		{
+			double r = i * dr + bbox[0];
+			vec[i] = amp * exp(-((r - x0) * (r - x0) / (delta * delta)));
+		}
 	}
 
 	void ComputeSpatialDerivative(double dest_vec[], const double src_vec[])
 	{
-	    double dr = (bbox[1] - bbox[0]) / (gridsize - 1);
+		double dr = (bbox[1] - bbox[0]) / (gridsize - 1);
 
-	    for (int i = 1; i < gridsize - 1; ++i)
-	        dest_vec[i] = (src_vec[i + 1] - src_vec[i - 1]) / (2.0 * dr);
-	    dest_vec[0] = (src_vec[1] - src_vec[0]) / dr;
-	    dest_vec[gridsize - 1] = (src_vec[gridsize - 1] - src_vec[gridsize - 2]) / dr;
+		for (int i = 1; i < gridsize - 1; ++i)
+			dest_vec[i] = (src_vec[i + 1] - src_vec[i - 1]) / (2.0 * dr);
+		dest_vec[0] = (src_vec[1] - src_vec[0]) / dr;
+		dest_vec[gridsize - 1] = (src_vec[gridsize - 1] - src_vec[gridsize - 2]) / dr;
 	}
 
 	void LoadParameters()
 	{
-	    get_int_param(pFile, "Nr", &gridsize, 1);
-	    get_int_param(pFile, "Nt", &Nt, 1);
-	    get_int_param(pFile, "b_use_minkowski", &b_use_minkowski, 1);
-	    get_int_param(pFile, "init_data_type", &init_data_type, 1);
-	    get_int_param(pFile, "output_time_skip", &output_time_skip, 1);
-	    get_int_param(pFile, "sparse_output_level", &sparse_output_level, 1);
-	    get_real_param(pFile, "lambda", &lambda, 1);
-	    get_real_param(pFile, "phi_amp", &phi_amp, 1);
-	    get_real_param(pFile, "phi_delta", &phi_delta, 1);
-	    get_real_param(pFile, "phi_x0", &phi_r0, 1);
-	    get_real_param(pFile, "phi_perturb_amp", &phi_perturb_amp, 1);
-	    get_real_param(pFile, "phi_perturb_delta", &phi_perturb_delta, 1);
-	    get_real_param(pFile, "phi_perturb_x0", &phi_perturb_r0, 1);
-	    get_real_param(pFile, "radius", &radius, 1);
-	    get_real_param(pFile, "mass", &mass, 1);
-	    get_real_param(pFile, "init_data_omega", &init_data_omega, 1);
+		get_int_param(pFile, "Nr", &gridsize, 1);
+		get_int_param(pFile, "Nt", &Nt, 1);
+		get_int_param(pFile, "b_use_minkowski", &b_use_minkowski, 1);
+		get_int_param(pFile, "init_data_type", &init_data_type, 1);
+		get_int_param(pFile, "output_time_skip", &output_time_skip, 1);
+		get_int_param(pFile, "sparse_output_level", &sparse_output_level, 1);
+		get_real_param(pFile, "lambda", &lambda, 1);
+		get_real_param(pFile, "phi_amp", &phi_amp, 1);
+		get_real_param(pFile, "phi_delta", &phi_delta, 1);
+		get_real_param(pFile, "phi_x0", &phi_r0, 1);
+		get_real_param(pFile, "phi_perturb_amp", &phi_perturb_amp, 1);
+		get_real_param(pFile, "phi_perturb_delta", &phi_perturb_delta, 1);
+		get_real_param(pFile, "phi_perturb_x0", &phi_perturb_r0, 1);
+		get_real_param(pFile, "radius", &radius, 1);
+		get_real_param(pFile, "mass", &mass, 1);
+		get_real_param(pFile, "init_data_omega", &init_data_omega, 1);
 
-	    char* output_tag_ptr = nullptr;
-	    get_str_param(pFile, "output_tag", &output_tag_ptr, 1);
+		char* output_tag_ptr = nullptr;
+		get_str_param(pFile, "output_tag", &output_tag_ptr, 1);
 
-	    for (auto& str : var_names)
-	    	str.append(output_tag_ptr);
-	    psi_residual_name.append(output_tag_ptr);
+		for (auto& str : var_names)
+			str.append(output_tag_ptr);
+		psi_residual_name.append(output_tag_ptr);
 
-	    sparse_output_level = std::min(std::max(sparse_output_level, 0), SPARSE_MASK_COUNT - 1);
-	    memcpy(var_output_mask, var_output_masks[sparse_output_level], SPARSE_MASK_SIZE);
+		sparse_output_level = std::min(std::max(sparse_output_level, 0), SPARSE_MASK_COUNT - 1);
+		memcpy(var_output_mask, var_output_masks[sparse_output_level], SPARSE_MASK_SIZE);
 	}
 
 	void InitVariables()
@@ -254,62 +254,62 @@ private:
 		bbox[0] = 			0.0;
 		// bbox[0] = 			event_horizon_radius + 1.0;
 		bbox[1] = 			radius;
-	    dr = 				(bbox[1] - bbox[0]) / (gridsize - 1);
-	    dt = 				lambda * dr;
+		dr = 				(bbox[1] - bbox[0]) / (gridsize - 1);
+		dt = 				lambda * dr;
 
-	    phi_init =					new double[gridsize];
-	    var_buffer = 				new double[gridsize * var_count];
-	    var_buffer_new = 			new double[gridsize * var_count];
-	    mass_aspect = 				new double[gridsize];
-	    field =						new double[gridsize];
+		phi_init =					new double[gridsize];
+		var_buffer = 				new double[gridsize * var_count];
+		var_buffer_new = 			new double[gridsize * var_count];
+		mass_aspect = 				new double[gridsize];
+		field =						new double[gridsize];
 
-	    double* phi1_ptr =	&var_buffer[gridsize * VAR_PHI1];
-	    double* phi2_ptr = 	&var_buffer[gridsize * VAR_PHI2];
-	    double* phi3_ptr =	&var_buffer[gridsize * VAR_PHI3];
-	    double* xi1_ptr =	&var_buffer[gridsize * VAR_XI1];
-	    double* pi1_ptr =	&var_buffer[gridsize * VAR_PI1];
-	    double* xi2_ptr =	&var_buffer[gridsize * VAR_XI2];
+		double* phi1_ptr =	&var_buffer[gridsize * VAR_PHI1];
+		double* phi2_ptr = 	&var_buffer[gridsize * VAR_PHI2];
+		double* phi3_ptr =	&var_buffer[gridsize * VAR_PHI3];
+		double* xi1_ptr =	&var_buffer[gridsize * VAR_XI1];
+		double* pi1_ptr =	&var_buffer[gridsize * VAR_PI1];
+		double* xi2_ptr =	&var_buffer[gridsize * VAR_XI2];
 		double* pi2_ptr =	&var_buffer[gridsize * VAR_PI2];
 		double* xi3_ptr = 	&var_buffer[gridsize * VAR_XI3];
 		double* pi3_ptr = 	&var_buffer[gridsize * VAR_PI3];
-	    double* psi_ptr =	&var_buffer[gridsize * VAR_PSI];
-	    double* beta_ptr =	&var_buffer[gridsize * VAR_BETA];
-	    double* alpha_ptr =	&var_buffer[gridsize * VAR_ALPHA];
+		double* psi_ptr =	&var_buffer[gridsize * VAR_PSI];
+		double* beta_ptr =	&var_buffer[gridsize * VAR_BETA];
+		double* alpha_ptr =	&var_buffer[gridsize * VAR_ALPHA];
 
-	    memset(var_buffer, 0, sizeof(double) * gridsize * var_count);
+		memset(var_buffer, 0, sizeof(double) * gridsize * var_count);
 
-	    switch (init_data_type)
-	    {
-	    case DATA_TYPE_NOTHING:
-	    	break;
+		switch (init_data_type)
+		{
+		case DATA_TYPE_NOTHING:
+			break;
 
-	    case DATA_TYPE_WAVE_PACKET1:
-	    case DATA_TYPE_RIGHT_MOVING_WAVE_PACKET1:
-	    case DATA_TYPE_LEFT_MOVING_WAVE_PACKET1:
-		    InitGaussian(phi1_ptr, phi_amp, phi_delta, phi_r0);
-		    ComputeSpatialDerivative(xi1_ptr, phi1_ptr);
-		    if (init_data_type == DATA_TYPE_LEFT_MOVING_WAVE_PACKET1)
-			    for (int i = 0; i < gridsize; ++i)
-			    	pi1_ptr[i] = xi1_ptr[i];
-		    else if (init_data_type == DATA_TYPE_RIGHT_MOVING_WAVE_PACKET1)
+		case DATA_TYPE_WAVE_PACKET1:
+		case DATA_TYPE_RIGHT_MOVING_WAVE_PACKET1:
+		case DATA_TYPE_LEFT_MOVING_WAVE_PACKET1:
+			InitGaussian(phi1_ptr, phi_amp, phi_delta, phi_r0);
+			ComputeSpatialDerivative(xi1_ptr, phi1_ptr);
+			if (init_data_type == DATA_TYPE_LEFT_MOVING_WAVE_PACKET1)
+				for (int i = 0; i < gridsize; ++i)
+					pi1_ptr[i] = xi1_ptr[i];
+			else if (init_data_type == DATA_TYPE_RIGHT_MOVING_WAVE_PACKET1)
 				for (int i = 0; i < gridsize; ++i)
 					pi1_ptr[i] = -xi1_ptr[i];
-	    	break;
+			break;
 
-	    case DATA_TYPE_WAVE_PACKET2:
-	    case DATA_TYPE_RIGHT_MOVING_WAVE_PACKET2:
-	    case DATA_TYPE_LEFT_MOVING_WAVE_PACKET2:
-		    InitGaussian(phi2_ptr, phi_amp, phi_delta, phi_r0);
-		    ComputeSpatialDerivative(xi2_ptr, phi2_ptr);
-		    if (init_data_type == DATA_TYPE_LEFT_MOVING_WAVE_PACKET2)
-			    for (int i = 0; i < gridsize; ++i)
-			    	pi2_ptr[i] = xi2_ptr[i];
-		    else if (init_data_type == DATA_TYPE_RIGHT_MOVING_WAVE_PACKET2)
+		case DATA_TYPE_WAVE_PACKET2:
+		case DATA_TYPE_RIGHT_MOVING_WAVE_PACKET2:
+		case DATA_TYPE_LEFT_MOVING_WAVE_PACKET2:
+			InitGaussian(phi2_ptr, phi_amp, phi_delta, phi_r0);
+			ComputeSpatialDerivative(xi2_ptr, phi2_ptr);
+			if (init_data_type == DATA_TYPE_LEFT_MOVING_WAVE_PACKET2)
+				for (int i = 0; i < gridsize; ++i)
+					pi2_ptr[i] = xi2_ptr[i];
+			else if (init_data_type == DATA_TYPE_RIGHT_MOVING_WAVE_PACKET2)
 				for (int i = 0; i < gridsize; ++i)
 					pi2_ptr[i] = -xi2_ptr[i];
-	    	break;
+			break;
 
-	    case DATA_TYPE_WAVE_PACKET3:
+		case DATA_TYPE_WAVE_PACKET3:
 		case DATA_TYPE_RIGHT_MOVING_WAVE_PACKET3:
 		case DATA_TYPE_LEFT_MOVING_WAVE_PACKET3:
 			InitGaussian(phi3_ptr, phi_amp, phi_delta, phi_r0);
@@ -362,21 +362,21 @@ private:
 			}
 
 			break;
-	    }
+		}
 
-	    for (int i = 0; i < gridsize; ++i)
-	    {
-	    	psi_ptr[i] = 1.0;
+		for (int i = 0; i < gridsize; ++i)
+		{
+			psi_ptr[i] = 1.0;
 			beta_ptr[i] = 0.0;
 			alpha_ptr[i] = 1.0;
-	    }
+		}
 
-	    memcpy(var_buffer_new, var_buffer, sizeof(double) * gridsize * var_count);
+		memcpy(var_buffer_new, var_buffer, sizeof(double) * gridsize * var_count);
 
-	    if (!b_use_minkowski)
-	    	RelaxInitialData();
+		if (!b_use_minkowski)
+			RelaxInitialData();
 
-	    // ComputeResiduals();
+		// ComputeResiduals();
 	}
 
 	// For debug purposes
@@ -723,14 +723,14 @@ private:
 	{
 		const size_t iteration_count = 100;
 
-	    double* xi1_ptr =	&var_buffer_new[gridsize * VAR_XI1];
-	    double* pi1_ptr =	&var_buffer_new[gridsize * VAR_PI1];
-	    double* xi2_ptr =	&var_buffer_new[gridsize * VAR_XI2];
-	    double* pi2_ptr =	&var_buffer_new[gridsize * VAR_PI2];
-	    double* xi3_ptr =	&var_buffer_new[gridsize * VAR_XI3];
-	    double* pi3_ptr = 	&var_buffer_new[gridsize * VAR_PI3];
+		double* xi1_ptr =	&var_buffer_new[gridsize * VAR_XI1];
+		double* pi1_ptr =	&var_buffer_new[gridsize * VAR_PI1];
+		double* xi2_ptr =	&var_buffer_new[gridsize * VAR_XI2];
+		double* pi2_ptr =	&var_buffer_new[gridsize * VAR_PI2];
+		double* xi3_ptr =	&var_buffer_new[gridsize * VAR_XI3];
+		double* pi3_ptr = 	&var_buffer_new[gridsize * VAR_PI3];
 
-	    bool bConvergence = false;
+		bool bConvergence = false;
 
 		for (size_t iterations = 0; iterations < iteration_count && !bConvergence; ++iterations)
 		{
@@ -761,40 +761,40 @@ private:
 			for (i = 1; i < gridsize - 1; ++i)
 			{
 				pi1_temp = (dr*dt*psi(i)*r(i)*((12*pi1(i,-1))/dt - 6*alpha(i)*DV(Power(phi1(i),2) + Power(phi2(i),2))*phi1(i)*Power(psi(i),2) -
-					       (3*beta(-1 + i)*pi1(-1 + i)*Power(psi(-1 + i),4)*Power(r(-1 + i),2))/(dr*Power(psi(i),4)*Power(r(i),2)) + (3*beta(1 + i)*pi1(1 + i)*Power(psi(1 + i),4)*Power(r(1 + i),2))/(dr*Power(psi(i),4)*Power(r(i),2)) -
-					       (3*alpha(-1 + i)*Power(psi(-1 + i),2)*Power(r(-1 + i),2)*xi1(-1 + i))/(dr*Power(psi(i),4)*Power(r(i),2)) + (3*alpha(1 + i)*Power(psi(1 + i),2)*Power(r(1 + i),2)*xi1(1 + i))/(dr*Power(psi(i),4)*Power(r(i),2)) +
-					       (-2*beta(1 + i,-1)*pi1(i,-1)*Power(psi(i,-1),4)*Power(r(i,-1),2) - 6*dr*alpha(i,-1)*DV(Power(phi1(i),2) + Power(phi2(i),2),-1)*phi1(i,-1)*Power(psi(i,-1),6)*Power(r(i,-1),2) -
-					          4*beta(i,-1)*pi1(i,-1)*Power(psi(i,-1),3)*r(i,-1)*(2*dr*psi(i,-1) + 3*(-psi(-1 + i,-1) + psi(1 + i,-1))*r(i,-1)) +
-					          beta(-1 + i,-1)*(-3*pi1(-1 + i,-1)*Power(psi(-1 + i,-1),4)*Power(r(-1 + i,-1),2) + 2*pi1(i,-1)*Power(psi(i,-1),4)*Power(r(i,-1),2)) +
-					          3*beta(1 + i,-1)*pi1(1 + i,-1)*Power(psi(1 + i,-1),4)*Power(r(1 + i,-1),2) - 3*alpha(-1 + i,-1)*Power(psi(-1 + i,-1),2)*Power(r(-1 + i,-1),2)*xi1(-1 + i,-1) +
-					          3*alpha(1 + i,-1)*Power(psi(1 + i,-1),2)*Power(r(1 + i,-1),2)*xi1(1 + i,-1))/(dr*Power(psi(i,-1),4)*Power(r(i,-1),2))))/
+						   (3*beta(-1 + i)*pi1(-1 + i)*Power(psi(-1 + i),4)*Power(r(-1 + i),2))/(dr*Power(psi(i),4)*Power(r(i),2)) + (3*beta(1 + i)*pi1(1 + i)*Power(psi(1 + i),4)*Power(r(1 + i),2))/(dr*Power(psi(i),4)*Power(r(i),2)) -
+						   (3*alpha(-1 + i)*Power(psi(-1 + i),2)*Power(r(-1 + i),2)*xi1(-1 + i))/(dr*Power(psi(i),4)*Power(r(i),2)) + (3*alpha(1 + i)*Power(psi(1 + i),2)*Power(r(1 + i),2)*xi1(1 + i))/(dr*Power(psi(i),4)*Power(r(i),2)) +
+						   (-2*beta(1 + i,-1)*pi1(i,-1)*Power(psi(i,-1),4)*Power(r(i,-1),2) - 6*dr*alpha(i,-1)*DV(Power(phi1(i),2) + Power(phi2(i),2),-1)*phi1(i,-1)*Power(psi(i,-1),6)*Power(r(i,-1),2) -
+							  4*beta(i,-1)*pi1(i,-1)*Power(psi(i,-1),3)*r(i,-1)*(2*dr*psi(i,-1) + 3*(-psi(-1 + i,-1) + psi(1 + i,-1))*r(i,-1)) +
+							  beta(-1 + i,-1)*(-3*pi1(-1 + i,-1)*Power(psi(-1 + i,-1),4)*Power(r(-1 + i,-1),2) + 2*pi1(i,-1)*Power(psi(i,-1),4)*Power(r(i,-1),2)) +
+							  3*beta(1 + i,-1)*pi1(1 + i,-1)*Power(psi(1 + i,-1),4)*Power(r(1 + i,-1),2) - 3*alpha(-1 + i,-1)*Power(psi(-1 + i,-1),2)*Power(r(-1 + i,-1),2)*xi1(-1 + i,-1) +
+							  3*alpha(1 + i,-1)*Power(psi(1 + i,-1),2)*Power(r(1 + i,-1),2)*xi1(1 + i,-1))/(dr*Power(psi(i,-1),4)*Power(r(i,-1),2))))/
 					   (2.*((6*dr - dt*beta(-1 + i) + dt*beta(1 + i))*psi(i)*r(i) + 2*dt*beta(i)*(2*dr*psi(i) + 3*(-psi(-1 + i) + psi(1 + i))*r(i))));
 				pi2_temp = (dr*dt*psi(i)*r(i)*((12*pi2(i,-1))/dt - 6*alpha(i)*DV(Power(phi1(i),2) + Power(phi2(i),2))*phi2(i)*Power(psi(i),2) -
-					       (3*beta(-1 + i)*pi2(-1 + i)*Power(psi(-1 + i),4)*Power(r(-1 + i),2))/(dr*Power(psi(i),4)*Power(r(i),2)) + (3*beta(1 + i)*pi2(1 + i)*Power(psi(1 + i),4)*Power(r(1 + i),2))/(dr*Power(psi(i),4)*Power(r(i),2)) -
-					       (3*alpha(-1 + i)*Power(psi(-1 + i),2)*Power(r(-1 + i),2)*xi2(-1 + i))/(dr*Power(psi(i),4)*Power(r(i),2)) + (3*alpha(1 + i)*Power(psi(1 + i),2)*Power(r(1 + i),2)*xi2(1 + i))/(dr*Power(psi(i),4)*Power(r(i),2)) +
-					       (-2*beta(1 + i,-1)*pi2(i,-1)*Power(psi(i,-1),4)*Power(r(i,-1),2) - 6*dr*alpha(i,-1)*DV(Power(phi1(i),2) + Power(phi2(i),2),-1)*phi2(i,-1)*Power(psi(i,-1),6)*Power(r(i,-1),2) -
-					          4*beta(i,-1)*pi2(i,-1)*Power(psi(i,-1),3)*r(i,-1)*(2*dr*psi(i,-1) + 3*(-psi(-1 + i,-1) + psi(1 + i,-1))*r(i,-1)) +
-					          beta(-1 + i,-1)*(-3*pi2(-1 + i,-1)*Power(psi(-1 + i,-1),4)*Power(r(-1 + i,-1),2) + 2*pi2(i,-1)*Power(psi(i,-1),4)*Power(r(i,-1),2)) +
-					          3*beta(1 + i,-1)*pi2(1 + i,-1)*Power(psi(1 + i,-1),4)*Power(r(1 + i,-1),2) - 3*alpha(-1 + i,-1)*Power(psi(-1 + i,-1),2)*Power(r(-1 + i,-1),2)*xi2(-1 + i,-1) +
-					          3*alpha(1 + i,-1)*Power(psi(1 + i,-1),2)*Power(r(1 + i,-1),2)*xi2(1 + i,-1))/(dr*Power(psi(i,-1),4)*Power(r(i,-1),2))))/
+						   (3*beta(-1 + i)*pi2(-1 + i)*Power(psi(-1 + i),4)*Power(r(-1 + i),2))/(dr*Power(psi(i),4)*Power(r(i),2)) + (3*beta(1 + i)*pi2(1 + i)*Power(psi(1 + i),4)*Power(r(1 + i),2))/(dr*Power(psi(i),4)*Power(r(i),2)) -
+						   (3*alpha(-1 + i)*Power(psi(-1 + i),2)*Power(r(-1 + i),2)*xi2(-1 + i))/(dr*Power(psi(i),4)*Power(r(i),2)) + (3*alpha(1 + i)*Power(psi(1 + i),2)*Power(r(1 + i),2)*xi2(1 + i))/(dr*Power(psi(i),4)*Power(r(i),2)) +
+						   (-2*beta(1 + i,-1)*pi2(i,-1)*Power(psi(i,-1),4)*Power(r(i,-1),2) - 6*dr*alpha(i,-1)*DV(Power(phi1(i),2) + Power(phi2(i),2),-1)*phi2(i,-1)*Power(psi(i,-1),6)*Power(r(i,-1),2) -
+							  4*beta(i,-1)*pi2(i,-1)*Power(psi(i,-1),3)*r(i,-1)*(2*dr*psi(i,-1) + 3*(-psi(-1 + i,-1) + psi(1 + i,-1))*r(i,-1)) +
+							  beta(-1 + i,-1)*(-3*pi2(-1 + i,-1)*Power(psi(-1 + i,-1),4)*Power(r(-1 + i,-1),2) + 2*pi2(i,-1)*Power(psi(i,-1),4)*Power(r(i,-1),2)) +
+							  3*beta(1 + i,-1)*pi2(1 + i,-1)*Power(psi(1 + i,-1),4)*Power(r(1 + i,-1),2) - 3*alpha(-1 + i,-1)*Power(psi(-1 + i,-1),2)*Power(r(-1 + i,-1),2)*xi2(-1 + i,-1) +
+							  3*alpha(1 + i,-1)*Power(psi(1 + i,-1),2)*Power(r(1 + i,-1),2)*xi2(1 + i,-1))/(dr*Power(psi(i,-1),4)*Power(r(i,-1),2))))/
 					   (2.*((6*dr - dt*beta(-1 + i) + dt*beta(1 + i))*psi(i)*r(i) + 2*dt*beta(i)*(2*dr*psi(i) + 3*(-psi(-1 + i) + psi(1 + i))*r(i))));
 				pi3_temp = (dr*dt*psi(i)*r(i)*((12*pi3(i,-1))/dt - (3*beta(-1 + i)*pi3(-1 + i)*Power(psi(-1 + i),4)*Power(r(-1 + i),2))/(dr*Power(psi(i),4)*Power(r(i),2)) +
-					       (3*beta(1 + i)*pi3(1 + i)*Power(psi(1 + i),4)*Power(r(1 + i),2))/(dr*Power(psi(i),4)*Power(r(i),2)) - (3*alpha(-1 + i)*Power(psi(-1 + i),2)*Power(r(-1 + i),2)*xi3(-1 + i))/(dr*Power(psi(i),4)*Power(r(i),2)) +
-					       (3*alpha(1 + i)*Power(psi(1 + i),2)*Power(r(1 + i),2)*xi3(1 + i))/(dr*Power(psi(i),4)*Power(r(i),2)) +
-					       (-2*beta(1 + i,-1)*pi3(i,-1)*Power(psi(i,-1),4)*Power(r(i,-1),2) - 4*beta(i,-1)*pi3(i,-1)*Power(psi(i,-1),3)*r(i,-1)*(2*dr*psi(i,-1) + 3*(-psi(-1 + i,-1) + psi(1 + i,-1))*r(i,-1)) +
-					          beta(-1 + i,-1)*(-3*pi3(-1 + i,-1)*Power(psi(-1 + i,-1),4)*Power(r(-1 + i,-1),2) + 2*pi3(i,-1)*Power(psi(i,-1),4)*Power(r(i,-1),2)) +
-					          3*beta(1 + i,-1)*pi3(1 + i,-1)*Power(psi(1 + i,-1),4)*Power(r(1 + i,-1),2) - 3*alpha(-1 + i,-1)*Power(psi(-1 + i,-1),2)*Power(r(-1 + i,-1),2)*xi3(-1 + i,-1) +
-					          3*alpha(1 + i,-1)*Power(psi(1 + i,-1),2)*Power(r(1 + i,-1),2)*xi3(1 + i,-1))/(dr*Power(psi(i,-1),4)*Power(r(i,-1),2))))/
+						   (3*beta(1 + i)*pi3(1 + i)*Power(psi(1 + i),4)*Power(r(1 + i),2))/(dr*Power(psi(i),4)*Power(r(i),2)) - (3*alpha(-1 + i)*Power(psi(-1 + i),2)*Power(r(-1 + i),2)*xi3(-1 + i))/(dr*Power(psi(i),4)*Power(r(i),2)) +
+						   (3*alpha(1 + i)*Power(psi(1 + i),2)*Power(r(1 + i),2)*xi3(1 + i))/(dr*Power(psi(i),4)*Power(r(i),2)) +
+						   (-2*beta(1 + i,-1)*pi3(i,-1)*Power(psi(i,-1),4)*Power(r(i,-1),2) - 4*beta(i,-1)*pi3(i,-1)*Power(psi(i,-1),3)*r(i,-1)*(2*dr*psi(i,-1) + 3*(-psi(-1 + i,-1) + psi(1 + i,-1))*r(i,-1)) +
+							  beta(-1 + i,-1)*(-3*pi3(-1 + i,-1)*Power(psi(-1 + i,-1),4)*Power(r(-1 + i,-1),2) + 2*pi3(i,-1)*Power(psi(i,-1),4)*Power(r(i,-1),2)) +
+							  3*beta(1 + i,-1)*pi3(1 + i,-1)*Power(psi(1 + i,-1),4)*Power(r(1 + i,-1),2) - 3*alpha(-1 + i,-1)*Power(psi(-1 + i,-1),2)*Power(r(-1 + i,-1),2)*xi3(-1 + i,-1) +
+							  3*alpha(1 + i,-1)*Power(psi(1 + i,-1),2)*Power(r(1 + i,-1),2)*xi3(1 + i,-1))/(dr*Power(psi(i,-1),4)*Power(r(i,-1),2))))/
 					   (2.*((6*dr - dt*beta(-1 + i) + dt*beta(1 + i))*psi(i)*r(i) + 2*dt*beta(i)*(2*dr*psi(i) + 3*(-psi(-1 + i) + psi(1 + i))*r(i))));
 				xi1_temp = (-((dt*alpha(-1 + i)*pi1(-1 + i))/(dr*Power(psi(-1 + i),2))) + (dt*alpha(1 + i)*pi1(1 + i))/(dr*Power(psi(1 + i),2)) - (dt*alpha(-1 + i,-1)*pi1(-1 + i,-1))/(dr*Power(psi(-1 + i,-1),2)) +
-					     (dt*alpha(1 + i,-1)*pi1(1 + i,-1))/(dr*Power(psi(1 + i,-1),2)) - (dt*beta(-1 + i)*xi1(-1 + i))/dr + (dt*beta(1 + i)*xi1(1 + i))/dr - (dt*beta(-1 + i,-1)*xi1(-1 + i,-1))/dr + 4*xi1(i,-1) +
-					     (dt*beta(1 + i,-1)*xi1(1 + i,-1))/dr)/4.;
+						 (dt*alpha(1 + i,-1)*pi1(1 + i,-1))/(dr*Power(psi(1 + i,-1),2)) - (dt*beta(-1 + i)*xi1(-1 + i))/dr + (dt*beta(1 + i)*xi1(1 + i))/dr - (dt*beta(-1 + i,-1)*xi1(-1 + i,-1))/dr + 4*xi1(i,-1) +
+						 (dt*beta(1 + i,-1)*xi1(1 + i,-1))/dr)/4.;
 				xi2_temp = (-((dt*alpha(-1 + i)*pi2(-1 + i))/(dr*Power(psi(-1 + i),2))) + (dt*alpha(1 + i)*pi2(1 + i))/(dr*Power(psi(1 + i),2)) - (dt*alpha(-1 + i,-1)*pi2(-1 + i,-1))/(dr*Power(psi(-1 + i,-1),2)) +
-					     (dt*alpha(1 + i,-1)*pi2(1 + i,-1))/(dr*Power(psi(1 + i,-1),2)) - (dt*beta(-1 + i)*xi2(-1 + i))/dr + (dt*beta(1 + i)*xi2(1 + i))/dr - (dt*beta(-1 + i,-1)*xi2(-1 + i,-1))/dr + 4*xi2(i,-1) +
-					     (dt*beta(1 + i,-1)*xi2(1 + i,-1))/dr)/4.;
+						 (dt*alpha(1 + i,-1)*pi2(1 + i,-1))/(dr*Power(psi(1 + i,-1),2)) - (dt*beta(-1 + i)*xi2(-1 + i))/dr + (dt*beta(1 + i)*xi2(1 + i))/dr - (dt*beta(-1 + i,-1)*xi2(-1 + i,-1))/dr + 4*xi2(i,-1) +
+						 (dt*beta(1 + i,-1)*xi2(1 + i,-1))/dr)/4.;
 				xi3_temp = (-((dt*alpha(-1 + i)*pi3(-1 + i))/(dr*Power(psi(-1 + i),2))) + (dt*alpha(1 + i)*pi3(1 + i))/(dr*Power(psi(1 + i),2)) - (dt*alpha(-1 + i,-1)*pi3(-1 + i,-1))/(dr*Power(psi(-1 + i,-1),2)) +
-					     (dt*alpha(1 + i,-1)*pi3(1 + i,-1))/(dr*Power(psi(1 + i,-1),2)) - (dt*beta(-1 + i)*xi3(-1 + i))/dr + (dt*beta(1 + i)*xi3(1 + i))/dr - (dt*beta(-1 + i,-1)*xi3(-1 + i,-1))/dr + 4*xi3(i,-1) +
-					     (dt*beta(1 + i,-1)*xi3(1 + i,-1))/dr)/4.;
+						 (dt*alpha(1 + i,-1)*pi3(1 + i,-1))/(dr*Power(psi(1 + i,-1),2)) - (dt*beta(-1 + i)*xi3(-1 + i))/dr + (dt*beta(1 + i)*xi3(1 + i))/dr - (dt*beta(-1 + i,-1)*xi3(-1 + i,-1))/dr + 4*xi3(i,-1) +
+						 (dt*beta(1 + i,-1)*xi3(1 + i,-1))/dr)/4.;
 				error = fabs(xi1_temp - xi1_ptr[i]) + fabs(pi1_temp - pi1_ptr[i]) + fabs(xi2_temp - xi2_ptr[i]) + fabs(pi2_temp - pi2_ptr[i])
 									+ fabs(xi3_temp - xi3_ptr[i]) + fabs(pi3_temp - pi3_ptr[i]);
 				bConvergence = bConvergence && (error < ERROR_TOLERANCE);
@@ -865,18 +865,18 @@ private:
 
 	void ComputeMassAspect(double mass_aspect[])
 	{
-	    int i = 0;
+		int i = 0;
 
-	    mass_aspect[i] = (Power(-beta(i) + (r(i)*(-3*beta(i) + 4*beta(1 + i) - beta(2 + i)))/(2.*dr),2)*Power(psi(i),6)*r(i))/(18.*Power(alpha(i),2)) -
-	    		   ((-3*psi(i) + 4*psi(1 + i) - psi(2 + i))*Power(r(i),2)*(-3*psi(i)*r(i) + 4*psi(1 + i)*r(1 + i) - psi(2 + i)*r(2 + i)))/(2.*Power(dr,2));
+		mass_aspect[i] = (Power(-beta(i) + (r(i)*(-3*beta(i) + 4*beta(1 + i) - beta(2 + i)))/(2.*dr),2)*Power(psi(i),6)*r(i))/(18.*Power(alpha(i),2)) -
+				   ((-3*psi(i) + 4*psi(1 + i) - psi(2 + i))*Power(r(i),2)*(-3*psi(i)*r(i) + 4*psi(1 + i)*r(1 + i) - psi(2 + i)*r(2 + i)))/(2.*Power(dr,2));
 
-	    for (; i < gridsize - 1; ++i)
-	    {
-	        mass_aspect[i] = (Power(-beta(i) + (r(i)*(-beta(-1 + i) + beta(1 + i)))/(2.*dr),2)*Power(psi(i),6)*r(i))/(18.*Power(alpha(i),2)) -
-	        		   ((-psi(-1 + i) + psi(1 + i))*Power(r(i),2)*(-(psi(-1 + i)*r(-1 + i)) + psi(1 + i)*r(1 + i)))/(2.*Power(dr,2));
-	    }
+		for (; i < gridsize - 1; ++i)
+		{
+			mass_aspect[i] = (Power(-beta(i) + (r(i)*(-beta(-1 + i) + beta(1 + i)))/(2.*dr),2)*Power(psi(i),6)*r(i))/(18.*Power(alpha(i),2)) -
+					   ((-psi(-1 + i) + psi(1 + i))*Power(r(i),2)*(-(psi(-1 + i)*r(-1 + i)) + psi(1 + i)*r(1 + i)))/(2.*Power(dr,2));
+		}
 
-	    mass_aspect[i] = (Power(-beta(i) + (r(i)*(beta(-2 + i) - 4*beta(-1 + i) + 3*beta(i)))/(2.*dr),2)*Power(psi(i),6)*r(i))/(18.*Power(alpha(i),2)) -
+		mass_aspect[i] = (Power(-beta(i) + (r(i)*(beta(-2 + i) - 4*beta(-1 + i) + 3*beta(i)))/(2.*dr),2)*Power(psi(i),6)*r(i))/(18.*Power(alpha(i),2)) -
 		   ((psi(-2 + i) - 4*psi(-1 + i) + 3*psi(i))*Power(r(i),2)*(psi(-2 + i)*r(-2 + i) - 4*psi(-1 + i)*r(-1 + i) + 3*psi(i)*r(i)))/(2.*Power(dr,2));
 	}
 
@@ -967,14 +967,14 @@ public:
 
 int main(int argc, char **argv)
 {
-    if (argc < 2)
-    {
-        cout << "Incorrect number of parameters!" << endl;
-        return EXIT_FAILURE;
-    }
+	if (argc < 2)
+	{
+		cout << "Incorrect number of parameters!" << endl;
+		return EXIT_FAILURE;
+	}
 
-    Application app(argv[1]);
-    app.Run();
+	Application app(argv[1]);
+	app.Run();
 
-    return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
